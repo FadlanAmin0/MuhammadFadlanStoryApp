@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Aplikasi untuk berbagi cerita dan pengalaman"
+    />
+    <title>Story App - M. Fadlan A.</title>
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- ✅ Skip link dengan struktur dan aksesibilitas benar -->
+    <!-- ✅ Skip link dengan struktur dan aksesibilitas benar -->
+    <a
+      href="#main-content"
+      class="skip-link"
+      id="skip-link"
+      aria-label="Lewati ke konten utama"
+      >Lewati ke Konten Utama</a
+    >
+
+    <header>
+      <div class="main-header container">
+        <a class="brand-name" href="#/">Story App - M. Fadlan A.</a>
+        <button
+          id="drawer-button"
+          class="drawer-button"
+          aria-label="Toggle Menu"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+        <nav
+          id="navigation-drawer"
+          class="navigation-drawer"
+          aria-label="Navigasi utama"
+        >
+          <ul id="nav-list" class="nav-list">
+            <li><a href="#/">Beranda</a></li>
+            <li><a href="#/about">About</a></li>
+            <li><a href="#/offline">Cerita Tersimpan</a></li>
+            <li id="add-story-link" style="display: none">
+              <a href="#/add-story">Tambah Cerita</a>
+            </li>
+            <li id="auth-link"><a href="#/login">Login</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content" class="main-content container" tabindex="-1">
+      <div id="map" style="height: 400px; margin-bottom: 2rem"></div>
+    </main>
+
+    <footer
+      class="container"
+      style="text-align: center; padding: 1rem; background-color: #f8f9fa"
+    >
+      <p>&copy; 2025 App Story</p>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+      // Service Worker Registration
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("ServiceWorker registration successful");
+            })
+            .catch((err) => {
+              console.log("ServiceWorker registration failed: ", err);
+            });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const navList = document.getElementById("nav-list");
+        const drawerBtn = document.getElementById("drawer-button");
+        const authLink = document.getElementById("auth-link");
+        const addStoryLink = document.getElementById("add-story-link");
+        const isAuthenticated = !!localStorage.getItem("authToken");
+
+        // ✅ Tampilkan link tambah cerita jika login
+        if (isAuthenticated) {
+          addStoryLink.style.display = "list-item";
+          authLink.innerHTML = '<a href="#/" id="logout-link">Logout</a>';
+        }
+
+        // ✅ Logout handler (delegasi)
+        authLink.addEventListener("click", (e) => {
+          if (e.target.id === "logout-link") {
+            e.preventDefault();
+            localStorage.removeItem("authToken");
+            alert("Anda telah logout.");
+            window.location.hash = "/login";
+            location.reload(); // Refresh untuk update UI
+          }
+        });
+
+        // Hapus kode toggle drawer di sini, karena sudah dihandle di app.js
+        // drawerBtn.addEventListener("click", ... )
+        // document.addEventListener("click", ... )
+      });
+    </script>
+  </body>
+</html>
